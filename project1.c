@@ -1,11 +1,22 @@
 #include <stdio.h>
 #include <string.h>
 
+/* separators for tokens/inputs */
+const char SEPARATORS[] = " \t\n";
+/* size of buffer */
+const unsigned int BUFFER_SIZE = 128;
+/* max number of arguments */
+const unsigned int MAX_ARGS = 3;
+
+/* renaming unsigned char to byte */
+typedef unsigned char byte;
+
 int main(int argc, char **argv)
 {
-    char buffer[128] = {0};
+    byte buffer[BUFFER_SIZE] /*= {1}*/;
+    byte input[1];
 
-    char input[1];
+    printf("Done.\n\n");
 
     while (fgets(input, 2, stdin))
     {
