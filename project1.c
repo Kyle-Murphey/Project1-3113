@@ -3,28 +3,41 @@
 
 /* separators for tokens/inputs */
 const char SEPARATORS[] = " \t\n";
-/* size of buffer */
-const unsigned int BUFFER_SIZE = 128;
-/* max number of arguments */
-const unsigned int MAX_ARGS = 3;
 
 /* renaming unsigned char to byte */
 typedef unsigned char byte;
 
+
 int main(int argc, char **argv)
 {
-    byte buffer[BUFFER_SIZE] /*= {1}*/;
-    byte input[1];
+    //const unsigned int BUFFER_SIZE = 128; //size of buffer
+    ///*unsigned */int MAX_ARGS = 4; //max number of arguments
+
+    byte buffer[128] /*= {1}*/;
+    byte input[50];
+    byte * args[4];
+    byte ** arg;
+
 
     printf("Done.\n\n");
 
-    while (fgets(input, 2, stdin))
+    while (fgets(input, 50, stdin))
     {
-        if (input[0] == 'z')
+        //tokenizes input and stores in args array
+        arg = args;
+        *arg++ = strtok(input, SEPARATORS);
+        while((*arg++ = strtok(NULL, SEPARATORS)));
+
+        if (*args[0] == 'i')
+        {
+            
+        }
+
+        if (*args[0] == 'z')
         {
             memset(buffer, 0, sizeof(buffer));
         }
-        else if (input[0] == 'l')
+        else if (*args[0] == 'l')
         {
             for (int i = 0; i < 128; ++i)
             {
