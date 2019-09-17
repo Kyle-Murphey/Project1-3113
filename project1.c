@@ -12,16 +12,10 @@ typedef unsigned char byte;
 
 int main(int argc, char **argv)
 {
-    //const unsigned int BUFFER_SIZE = 128; //size of buffer
-    ///*unsigned */int MAX_ARGS = 4; //max number of arguments
-
     byte buffer[128] = {0};
     byte input[50];
     byte * args[4];
     byte ** arg;
-
-
-    printf("Done.\n\n");
 
     while (fgets(input, 50, stdin))
     {
@@ -30,14 +24,14 @@ int main(int argc, char **argv)
         *arg++ = strtok(input, SEPARATORS);
         while((*arg++ = strtok(NULL, SEPARATORS)));
 
+        //input integer value
         if (*args[0] == 'i')
         {
-            int intVal = atoi(args[2]);
-            int intLoc = atoi(args[1]);
-            int * intLocation = (int*)(&buffer[intLoc]);
-            printf("0x%02x\n", atoi(args[2]));
-
-            *intLocation = intVal;
+            int value = atoi(args[2]);
+            int location = atoi(args[1]);
+            int * ptr_location = (int*)(&buffer[location]);
+            //printf("0x%02x\n", atoi(args[2]));
+            *ptr_location = value;
         }
         //prints integer output
         else if (*args[0] == 'I')
@@ -47,7 +41,7 @@ int main(int argc, char **argv)
             int total = 0; //total integer value
             const int base = 16; //hex is base 16
             int factor = 0; //factor increases by 2 for each group of bytes
-
+            
             //starts at index specified by arg, and increments until \0 (empty mem in buffer) and stores into output array
             for (int i = atoi(args[1]); buffer[i] != '\0'; ++i)
             {
@@ -62,7 +56,7 @@ int main(int argc, char **argv)
                 total += (output[i] * pow(base, factor));
                 factor += 2;
             }
-            //output integer
+            //output the integer
             printf ("%d\n", total);
         }
         //zero out the buffer
@@ -83,6 +77,5 @@ int main(int argc, char **argv)
                 }
             }
         }
-        //printf("got: %02x\n", input[0]);
     }
 }
