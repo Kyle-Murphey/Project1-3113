@@ -82,6 +82,20 @@ int main(int argc, char **argv)
             char * ptr_loc = (char*)(&buffer[atoi(args[1])]);
             printf("%c\n", *ptr_loc);
         }
+        //input float value
+        else if (*args[0] == 'f')
+        {
+            float value = atof(args[2]);
+            int location = atoi(args[1]);
+            float * ptr_location = (float*)(&buffer[location]);
+            *ptr_location = value;
+        }
+        //prints float value
+        else if (*args[0] == 'F')
+        {
+            float * ptr_loc = (float*)(&buffer[atoi(args[1])]);
+            printf("%f\n", *ptr_loc);
+        }
         //zero out the buffer
         else if (*args[0] == 'z')
         {
