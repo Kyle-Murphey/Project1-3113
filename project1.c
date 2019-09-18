@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
 
 /* separators for tokens/inputs */
 const char SEPARATORS[] = " \t\n";
@@ -14,11 +13,12 @@ typedef unsigned char byte;
 */
 int main(int argc, char **argv)
 {
-    byte buffer[128] = {0};
-    byte input[50];
-    byte * args[4];
-    byte ** arg;
+    byte buffer[128] = {0}; //buffer to store values in
+    byte input[50]; //stores input from cl
+    byte * args[4]; //stores arguments from input
+    byte ** arg; //pointer to arguments
 
+    //main input loop, continues until EOF
     while (fgets(input, 50, stdin))
     {
         //tokenizes input and stores in args array
@@ -64,6 +64,18 @@ int main(int argc, char **argv)
             printf ("%d\n", total);
 */
         }
+        else if (*args[0] == 'h')
+        {
+            int hex = (int)strtol(args[2], NULL, 16);
+            int location = atoi(args[1]);
+            int * ptr_location = (int*)(&buffer[location]);
+            *ptr_location = hex;
+        }
+        else if (*args[0] == 'H')
+        {
+            int * ptr_loc = (int*)(&buffer[atoi(args[1])]);
+            printf("%x\n", *ptr_loc);
+        }
         //input byte value
         else if (*args[0] == 'b')
         {
@@ -96,6 +108,10 @@ int main(int argc, char **argv)
                     printf("\n");
                 }
             }
+        }
+        else
+        {
+            fprintf(stderr, "invalid command\n");
         }
     }
 }
