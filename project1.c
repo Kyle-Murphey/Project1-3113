@@ -39,42 +39,6 @@ int main(int argc, char **argv)
         {
             int * ptr_loc = (int*)(&buffer[atoi(args[1])]); //pointer to location in buffer to read
             printf("%d\n", *ptr_loc); //print integer at given location
-
-/*            byte output[50] = {0}; //output array
-            int j = 0; //index for output array
-            int total = 0; //total integer value
-            const int base = 16; //hex is base 16
-            int factor = 0; //factor increases by 2 for each group of bytes
-
-            //starts at index specified by arg, and increments until \0 (empty mem in buffer) and stores into output array
-            for (int i = atoi(args[1]); buffer[i] != '\0'; ++i)
-            {
-                output[j++] = buffer[i];
-            }
-
-            int length = strlen(output); //number of hexes to parse
-            
-            //takes each hex value as a decimal and sums up the entries to give total int value
-            for (int i = 0; i < length; ++i)
-            {
-                total += (output[i] * pow(base, factor));
-                factor += 2;
-            }
-            //output the integer
-            printf ("%d\n", total);
-*/
-        }
-        else if (*args[0] == 'h')
-        {
-            int hex = (int)strtol(args[2], NULL, 16);
-            int location = atoi(args[1]);
-            int * ptr_location = (int*)(&buffer[location]);
-            *ptr_location = hex;
-        }
-        else if (*args[0] == 'H')
-        {
-            int * ptr_loc = (int*)(&buffer[atoi(args[1])]);
-            printf("%x\n", *ptr_loc);
         }
         //input byte value
         else if (*args[0] == 'b')
@@ -83,13 +47,40 @@ int main(int argc, char **argv)
             int location = atoi(args[1]);
             byte * ptr_location = (byte*)(&buffer[location]);
             *ptr_location = value;
-            //printf("%d\n", value);
         }
         //prints byte value
         else if (*args[0] == 'B')
         {
             byte * ptr_loc = (byte*)(&buffer[atoi(args[1])]);
             printf("%d\n", *ptr_loc);
+        }
+        //input hex value
+        else if (*args[0] == 'h')
+        {
+            int hex = (int)strtol(args[2], NULL, 16);
+            int location = atoi(args[1]);
+            int * ptr_location = (int*)(&buffer[location]);
+            *ptr_location = hex;
+        }
+        //prints hex value
+        else if (*args[0] == 'H')
+        {
+            int * ptr_loc = (int*)(&buffer[atoi(args[1])]);
+            printf("%x\n", *ptr_loc);
+        }
+        //input char value
+        else if (*args[0] == 'c')
+        {
+            char value = *args[2];
+            int location =  atoi(args[1]);
+            char * ptr_location = (char*)(&buffer[location]);
+            *ptr_location = value;
+        }
+        //prints char value
+        else if (*args[0] == 'C')
+        {
+            char * ptr_loc = (char*)(&buffer[atoi(args[1])]);
+            printf("%c\n", *ptr_loc);
         }
         //zero out the buffer
         else if (*args[0] == 'z')
@@ -102,7 +93,6 @@ int main(int argc, char **argv)
             for (int i = 0; i < 128; ++i)
             {
                 printf("%02x ", buffer[i]);
-
                 if ((i + 1) % 16 == 0)
                 {
                     printf("\n");
