@@ -59,14 +59,14 @@ int main(int argc, char **argv)
         {
             int hex = (int)strtol(args[2], NULL, 16);
             int location = atoi(args[1]);
-            int * ptr_location = (int*)(&buffer[location]);
+            byte * ptr_location = (byte*)(&buffer[location]);
             *ptr_location = hex;
         }
         //prints hex value
         else if (*args[0] == 'H')
         {
-            int * ptr_loc = (int*)(&buffer[atoi(args[1])]);
-            printf("%x\n", *ptr_loc);
+            byte * ptr_loc = (byte*)(&buffer[atoi(args[1])]);
+            printf("%02x\n", *ptr_loc);
         }
         //input char value
         else if (*args[0] == 'c')
@@ -95,6 +95,23 @@ int main(int argc, char **argv)
         {
             float * ptr_loc = (float*)(&buffer[atoi(args[1])]);
             printf("%f\n", *ptr_loc);
+        }
+        else if (*args[0] == 's')
+        {
+            char * string = args[2];
+            int strLength = strlen(args[2]);
+            int location = atoi(args[1]);
+
+            //stores each char of string into buffer
+            for (int i = 0; i < strLength; ++i)
+            {
+                buffer[location++] = *string++;
+            }
+        }
+        else if (*args[0] == 'S')
+        {
+            char * ptr_loc = (char*)(&buffer[atoi(args[1])]);
+            printf("%s\n", ptr_loc);
         }
         //zero out the buffer
         else if (*args[0] == 'z')
