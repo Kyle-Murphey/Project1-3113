@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "storage.h"
 
 /* separators for tokens/inputs */
 const char SEPARATORS[] = " \t\n";
@@ -96,6 +97,7 @@ int main(int argc, char **argv)
             float * ptr_loc = (float*)(&buffer[atoi(args[1])]);
             printf("%f\n", *ptr_loc);
         }
+        //input string value
         else if (*args[0] == 's')
         {
             char * string = args[2];
@@ -108,6 +110,7 @@ int main(int argc, char **argv)
                 buffer[location++] = *string++;
             }
         }
+        //prints string value
         else if (*args[0] == 'S')
         {
             char * ptr_loc = (char*)(&buffer[atoi(args[1])]);
