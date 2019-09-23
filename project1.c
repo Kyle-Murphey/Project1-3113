@@ -13,36 +13,23 @@ const char SEPARATORS[] = " \t\n";
 /* renaming unsigned char to byte */
 typedef unsigned char byte;
 
+/*
+ * stores integer value in the buffer
+ */
 void input_int(byte * args[], byte * buffer)
 {
-    byte * checkArgs = args[1];
-    int error = 0;
+    byte * checkArgs = args[2]; //used to scan over inputs to check for invalid commands/values
 
-    for (int i = 0; i < strlen(args[1]); ++i)
-    {
-        if (*checkArgs < '0' || *checkArgs > '9' )
-        {
-            fprintf(stderr, "invalid location\n");
-            error = 1;
-            break;
-        }
-        ++checkArgs;
-    }
-    if (error == 1) return;
-
-    checkArgs = args[2];
+    //checks each digit for int value
     for (int i = 0; i < strlen(args[2]); ++i)
     {
         if (*checkArgs != '-' && (*checkArgs < '0' || *checkArgs > '9'))
         {
             fprintf(stderr, "invalid integer\n");
-            error = 1;
-            break;
+            return;
         }
         ++checkArgs;
     }
-    if (error == 1) return;
-
     int value = atoi(args[2]); //value to store
     int location = atoi(args[1]); //location in buffer to get stored
     int * ptr_location = (int*)(&buffer[location]); //pointer to the location in the buffer to store value
@@ -50,14 +37,26 @@ void input_int(byte * args[], byte * buffer)
 }
 
 /*
+ * stores byte value in the buffer
+ */
+void input_byte(byte * args[], byte * buffer)
+{
+    byte value = atoi(args[2]);
+    int location = atoi(args[1]);
+    byte * ptr_location = (byte*)(&buffer[location]);
+    *ptr_location = value;
+}
+
+/*
  * main function
-*/
+ */
 int main(int argc, char **argv)
 {
     byte buffer[MAX_BUF] = {0}; //buffer to store values in
     byte input[50]; //stores input from cl
     byte * args[MAX_ARGS] = {0}; //stores arguments from input
     byte ** arg; //pointer to arguments
+    byte * checkArgs; //used to check for invalid commands
 
     STORAGE * file = init_storage(STORAGE_NAME); //open or create file for storage
 
@@ -77,6 +76,18 @@ int main(int argc, char **argv)
         {
             fprintf(stderr, "invalid command\n");
             continue;
+        }
+        checkArgs = args[1];
+
+        //checks each digit for location
+        for (int i = 0; i < strlen(args[1]); ++i)
+        {
+            if (*checkArgs < '0' || *checkArgs > '9' )
+            {
+                fprintf(stderr, "invalid location\n");
+                continue;
+            }
+            ++checkArgs;
         }
 
         //zero out the buffer
@@ -120,10 +131,7 @@ int main(int argc, char **argv)
         //input byte value
         else if (*args[0] == 'b')
         {
-            byte value = atoi(args[2]);
-            int location = atoi(args[1]);
-            byte * ptr_location = (byte*)(&buffer[location]);
-            *ptr_location = value;
+            input_byte(args, buffer);
         }
         //prints byte value
         else if (*args[0] == 'B')
