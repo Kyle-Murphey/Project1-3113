@@ -13,16 +13,14 @@ typedef struct
 STORAGE * init_storage(char * name)
 {
     STORAGE * file = malloc(sizeof(STORAGE));
-    file->fd = open(name, O_CREAT | O_RDWR);
+    file->fd = open(name, O_CREAT | O_RDWR | S_IRWXU);
 
     if (file->fd == -1)
     {
       fprintf(stderr, "Could not open or create file\n");
       return NULL;
     }
-    
     return file;
-    
 }
 
 /* REMEMBER TO ERROR CHECK IN MAIN */
