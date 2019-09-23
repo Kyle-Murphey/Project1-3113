@@ -13,6 +13,42 @@ const char SEPARATORS[] = " \t\n";
 /* renaming unsigned char to byte */
 typedef unsigned char byte;
 
+void input_int(byte * args[], byte * buffer)
+{
+    byte * checkArgs = args[1];
+    int error = 0;
+
+    for (int i = 0; i < strlen(args[1]); ++i)
+    {
+        if (*checkArgs < '0' || *checkArgs > '9' )
+        {
+            fprintf(stderr, "invalid location\n");
+            error = 1;
+            break;
+        }
+        ++checkArgs;
+    }
+    if (error == 1) return;
+
+    checkArgs = args[2];
+    for (int i = 0; i < strlen(args[2]); ++i)
+    {
+        if (*checkArgs != '-' && (*checkArgs < '0' || *checkArgs > '9'))
+        {
+            fprintf(stderr, "invalid integer\n");
+            error = 1;
+            break;
+        }
+        ++checkArgs;
+    }
+    if (error == 1) return;
+
+    int value = atoi(args[2]); //value to store
+    int location = atoi(args[1]); //location in buffer to get stored
+    int * ptr_location = (int*)(&buffer[location]); //pointer to the location in the buffer to store value
+    *ptr_location = value; //set val of location to inputted value
+}
+
 /*
  * main function
 */
@@ -20,10 +56,10 @@ int main(int argc, char **argv)
 {
     byte buffer[MAX_BUF] = {0}; //buffer to store values in
     byte input[50]; //stores input from cl
-    byte * args[MAX_ARGS]; //stores arguments from input
+    byte * args[MAX_ARGS] = {0}; //stores arguments from input
     byte ** arg; //pointer to arguments
 
-    STORAGE * file = init_storage(STORAGE_NAME); //open/create file for storage
+    STORAGE * file = init_storage(STORAGE_NAME); //open or create file for storage
 
     //main input loop, continues until EOF
     while (fgets(input, 50, stdin))
@@ -32,6 +68,16 @@ int main(int argc, char **argv)
         arg = args;
         *arg++ = strtok(input, SEPARATORS);
         while((*arg++ = strtok(NULL, SEPARATORS)));
+
+        //only enter is pressed
+        if (args[0] == 0) continue;
+
+        //checks if first input is only one character
+        if (strlen(args[0]) != 1)
+        {
+            fprintf(stderr, "invalid command\n");
+            continue;
+        }
 
         //zero out the buffer
         if (*args[0] == 'z')
@@ -63,10 +109,7 @@ int main(int argc, char **argv)
         //input integer value
         else if (*args[0] == 'i')
         {
-            int value = atoi(args[2]); //value to store
-            int location = atoi(args[1]); //location in buffer to get stored
-            int * ptr_location = (int*)(&buffer[location]); //pointer to the location in the buffer to store value
-            *ptr_location = value; //set val of location to inputted value
+            input_int(args, buffer);
         }
         //prints integer output
         else if (*args[0] == 'I')
