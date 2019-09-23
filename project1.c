@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     byte * args[MAX_ARGS]; //stores arguments from input
     byte ** arg; //pointer to arguments
 
-    STORAGE * file = init_storage(STORAGE_NAME);
+    STORAGE * file = init_storage(STORAGE_NAME); //open/create file for storage
 
     //main input loop, continues until EOF
     while (fgets(input, 50, stdin))
@@ -33,8 +33,35 @@ int main(int argc, char **argv)
         *arg++ = strtok(input, SEPARATORS);
         while((*arg++ = strtok(NULL, SEPARATORS)));
 
+        //zero out the buffer
+        if (*args[0] == 'z')
+        {
+            memset(buffer, 0, sizeof(buffer));
+        }
+        //list contents of buffer
+        else if (*args[0] == 'l')
+        {
+            for (int i = 0; i < 128; ++i)
+            {
+                printf("%02x ", buffer[i]);
+                if ((i + 1) % 16 == 0)
+                {
+                    printf("\n");
+                }
+            }
+        }
+        //writes content from the buffer to the file
+        else if (*args[0] == 'w')
+        {
+            int write = put_bytes(file, buffer, atoi(args[1]), atoi(args[2]));
+        }
+        //reads content from the file into the buffer
+        else if (*args[0] == 'r')
+        {
+            int read = get_bytes(file, buffer, atoi(args[1]), atoi(args[2]));
+        }
         //input integer value
-        if (*args[0] == 'i')
+        else if (*args[0] == 'i')
         {
             int value = atoi(args[2]); //value to store
             int location = atoi(args[1]); //location in buffer to get stored
@@ -122,40 +149,13 @@ int main(int argc, char **argv)
             char * ptr_loc = (char*)(&buffer[atoi(args[1])]);
             printf("%s\n", ptr_loc);
         }
-        //zero out the buffer
-        else if (*args[0] == 'z')
-        {
-            memset(buffer, 0, sizeof(buffer));
-        }
-        //list contents of buffer
-        else if (*args[0] == 'l')
-        {
-            for (int i = 0; i < 128; ++i)
-            {
-                printf("%02x ", buffer[i]);
-                if ((i + 1) % 16 == 0)
-                {
-                    printf("\n");
-                }
-            }
-        }
-        else if (*args[0] == 'w')
-        {
-            int write = put_bytes(file, buffer, atoi(args[1]), atoi(args[2]));
-        }
-        else if (*args[0] == 'r')
-        {
-            int read = get_bytes(file, buffer, atoi(args[1]), atoi(args[2]));
-        }
+        //bad command
         else
         {
             fprintf(stderr, "invalid command\n");
         }
     }
 
+    //closing file
     int close = close_storage(file);
-    if (close < 0)
-    {
-        fprintf(stderr, "error closing file\n");
-    }
 }

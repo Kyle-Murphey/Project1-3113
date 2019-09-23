@@ -23,10 +23,14 @@ STORAGE * init_storage(char * name)
     return file;
 }
 
-/* REMEMBER TO ERROR CHECK IN MAIN */
 int close_storage(STORAGE *storage)
 {
   int isClosed = close(storage->fd);
+
+  if (isClosed < 0)
+  {
+    fprintf(stderr, "error closing file\n");
+  }
   return isClosed;
 }
 
