@@ -13,7 +13,7 @@ typedef struct
 STORAGE * init_storage(char * name)
 {
     STORAGE * file = malloc(sizeof(STORAGE));
-    file->fd = open(name, O_CREAT | O_RDWR | S_IRWXU);
+    file->fd = open(name, O_CREAT | O_RDWR, S_IRWXU);
 
     if (file->fd == -1)
     {
