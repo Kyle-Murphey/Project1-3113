@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include "storage.h"
 
+#define MAX_BUF 128
+#define MAX_ARGS 4
+#define STORAGE_NAME "storage.bin"
+
 /* separators for tokens/inputs */
 const char SEPARATORS[] = " \t\n";
 
@@ -14,10 +18,12 @@ typedef unsigned char byte;
 */
 int main(int argc, char **argv)
 {
-    byte buffer[128] = {0}; //buffer to store values in
+    byte buffer[MAX_BUF] = {0}; //buffer to store values in
     byte input[50]; //stores input from cl
-    byte * args[4]; //stores arguments from input
+    byte * args[MAX_ARGS]; //stores arguments from input
     byte ** arg; //pointer to arguments
+
+    STORAGE * file = init_storage(STORAGE_NAME);
 
     //main input loop, continues until EOF
     while (fgets(input, 50, stdin))
@@ -133,9 +139,23 @@ int main(int argc, char **argv)
                 }
             }
         }
+        else if (*args[0] == 'w')
+        {
+            int write = put_bytes(file, buffer, atoi(args[1]), atoi(args[2]));
+        }
+        else if (*args[0] == 'r')
+        {
+            int read = get_bytes(file, buffer, atoi(args[1]), atoi(args[2]));
+        }
         else
         {
             fprintf(stderr, "invalid command\n");
         }
+    }
+
+    int close = close_storage(file);
+    if (close < 0)
+    {
+        fprintf(stderr, "error closing file\n");
     }
 }
