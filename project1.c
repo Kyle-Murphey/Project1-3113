@@ -14,7 +14,7 @@ const char SEPARATORS[] = " \t\n";
 typedef unsigned char byte;
 
 /*
- * stores integer value in the buffer
+ * stores integer value into the buffer
  */
 void input_int(byte * args[], byte * buffer)
 {
@@ -44,7 +44,7 @@ void input_int(byte * args[], byte * buffer)
 }
 
 /*
- * stores byte value in the buffer
+ * stores byte value into the buffer
  */
 void input_byte(byte * args[], byte * buffer)
 {
@@ -62,7 +62,7 @@ void input_byte(byte * args[], byte * buffer)
 }
 
 /*
- * stores hex value in the buffer
+ * stores hex value into the buffer
  */
 void input_hex(byte * args[], byte * buffer)
 {
@@ -92,7 +92,7 @@ void input_hex(byte * args[], byte * buffer)
 }
 
 /*
- * stores char value in the buffer
+ * stores char value into the buffer
  */
 void input_char(byte * args[], byte * buffer)
 {
@@ -110,7 +110,7 @@ void input_char(byte * args[], byte * buffer)
 }
 
 /*
- * stores float value in the buffer
+ * stores float value into the buffer
  */
 void input_float(byte * args[], byte * buffer)
 {
@@ -137,6 +137,29 @@ void input_float(byte * args[], byte * buffer)
     int location = atoi(args[1]);
     float * ptr_location = (float*)(&buffer[location]);
     *ptr_location = value;
+}
+
+/*
+ * stores string value into the buffer
+ */
+void input_string(byte * args[], byte * buffer)
+{
+    //checks if value was inputted
+    if (args[2] == NULL)
+    {
+        fprintf(stderr, "no value given\n");
+        return;
+    }
+    
+    char * string = args[2];
+    int strLength = strlen(args[2]);
+    int location = atoi(args[1]);
+
+    //stores each char of string into buffer
+    for (int i = 0; i < strLength; ++i)
+    {
+        buffer[location++] = *string++;
+    }
 }
 
 /*
@@ -192,18 +215,22 @@ int main(int argc, char **argv)
         //makes sure more than one param was entered
         if (args[1] != NULL)
         {
-            checkArgs = args[1];
-
+            checkArgs = args[1]; //2nd parameter
+            int isError = 0; //flag for bad location
+            
             //checks each digit for location
             for (int i = 0; i < strlen(args[1]); ++i)
             {
                 if (*checkArgs < '0' || *checkArgs > '9' )
                 {
                     fprintf(stderr, "invalid location\n");
-                    continue;
+                    isError = 1;
+                    break;
                 }
                 ++checkArgs;
             }
+            //restart main loop
+            if (isError) continue;
         }
         //no second argument
         else
@@ -280,15 +307,7 @@ int main(int argc, char **argv)
         //input string value
         else if (*args[0] == 's')
         {
-            char * string = args[2];
-            int strLength = strlen(args[2]);
-            int location = atoi(args[1]);
-
-            //stores each char of string into buffer
-            for (int i = 0; i < strLength; ++i)
-            {
-                buffer[location++] = *string++;
-            }
+            input_string(args, buffer);
         }
         //prints string value
         else if (*args[0] == 'S')
