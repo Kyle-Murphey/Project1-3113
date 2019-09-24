@@ -20,6 +20,13 @@ void input_int(byte * args[], byte * buffer)
 {
     byte * checkArgs = args[2]; //used to scan over inputs to check for invalid commands/values
 
+    //checks if value was inputted
+    if (args[2] == NULL)
+    {
+        fprintf(stderr, "no value given\n");
+        return;
+    }
+
     //checks each digit for int value
     for (int i = 0; i < strlen(args[2]); ++i)
     {
@@ -41,9 +48,94 @@ void input_int(byte * args[], byte * buffer)
  */
 void input_byte(byte * args[], byte * buffer)
 {
+    //checks if value was inputted
+    if (args[2] == NULL)
+    {
+        fprintf(stderr, "no value given\n");
+        return;
+    }
+
     byte value = atoi(args[2]);
     int location = atoi(args[1]);
     byte * ptr_location = (byte*)(&buffer[location]);
+    *ptr_location = value;
+}
+
+/*
+ * stores hex value in the buffer
+ */
+void input_hex(byte * args[], byte * buffer)
+{
+    byte * checkArgs = args[2]; //used to scan over inputs to check for invalid commands/values
+
+    //checks if value was inputted
+    if (args[2] == NULL)
+    {
+        fprintf(stderr, "no value given\n");
+        return;
+    }
+
+    //checks each digit for hex values
+    for (int i = 0; i < strlen(args[2]); ++i)
+    {
+        if (!(*checkArgs >= '0' && *checkArgs <= '9') && !(*checkArgs >= 'a' && *checkArgs <= 'z') && !(*checkArgs >= 'A' && *checkArgs <= 'Z'))
+        {
+            fprintf(stderr, "invalid hex\n");
+            return;
+        }
+        ++checkArgs;
+    }
+    int hex = (int)strtol(args[2], NULL, 16);
+    int location = atoi(args[1]);
+    byte * ptr_location = (byte*)(&buffer[location]);
+    *ptr_location = hex;
+}
+
+/*
+ * stores char value in the buffer
+ */
+void input_char(byte * args[], byte * buffer)
+{
+    //checks if value was inputted
+    if (args[2] == NULL)
+    {
+        fprintf(stderr, "no value given\n");
+        return;
+    }
+
+    char value = *args[2];
+    int location =  atoi(args[1]);
+    char * ptr_location = (char*)(&buffer[location]);
+    *ptr_location = value;
+}
+
+/*
+ * stores float value in the buffer
+ */
+void input_float(byte * args[], byte * buffer)
+{
+    byte * checkArgs = args[2]; //used to scan over inputs to check for invalid commands/values
+
+    //checks if value was inputted
+    if (args[2] == NULL)
+    {
+        fprintf(stderr, "no value given\n");
+        return;
+    }
+
+    //checks each digit for float value
+    for (int i = 0; i < strlen(args[2]); ++i)
+    {
+        if ((*checkArgs != '-' || *checkArgs != '.') && (*checkArgs < '0' || *checkArgs > '9'))
+        {
+            fprintf(stderr, "invalid integer\n");
+            return;
+        }
+        ++checkArgs;
+    }
+    float value = atof(args[2]);
+    int location = atoi(args[1]);
+    float * ptr_location = (float*)(&buffer[location]);
     *ptr_location = value;
 }
 
@@ -57,7 +149,6 @@ int main(int argc, char **argv)
     byte * args[MAX_ARGS] = {0}; //stores arguments from input
     byte ** arg; //pointer to arguments
     byte * checkArgs; //used to check for invalid commands
-
     STORAGE * file = init_storage(STORAGE_NAME); //open or create file for storage
 
     //main input loop, continues until EOF
@@ -69,7 +160,7 @@ int main(int argc, char **argv)
         while((*arg++ = strtok(NULL, SEPARATORS)));
 
         //only enter is pressed
-        if (args[0] == 0) continue;
+        if (args[0] == NULL) continue;
 
         //checks if first input is only one character
         if (strlen(args[0]) != 1)
@@ -77,23 +168,12 @@ int main(int argc, char **argv)
             fprintf(stderr, "invalid command\n");
             continue;
         }
-        checkArgs = args[1];
-
-        //checks each digit for location
-        for (int i = 0; i < strlen(args[1]); ++i)
-        {
-            if (*checkArgs < '0' || *checkArgs > '9' )
-            {
-                fprintf(stderr, "invalid location\n");
-                continue;
-            }
-            ++checkArgs;
-        }
-
+        
         //zero out the buffer
         if (*args[0] == 'z')
         {
             memset(buffer, 0, sizeof(buffer));
+            continue;
         }
         //list contents of buffer
         else if (*args[0] == 'l')
@@ -106,9 +186,34 @@ int main(int argc, char **argv)
                     printf("\n");
                 }
             }
+            continue;
         }
+
+        //makes sure more than one param was entered
+        if (args[1] != NULL)
+        {
+            checkArgs = args[1];
+
+            //checks each digit for location
+            for (int i = 0; i < strlen(args[1]); ++i)
+            {
+                if (*checkArgs < '0' || *checkArgs > '9' )
+                {
+                    fprintf(stderr, "invalid location\n");
+                    continue;
+                }
+                ++checkArgs;
+            }
+        }
+        //no second argument
+        else
+        {
+            fprintf(stderr, "not enough parameters\n");
+            continue;
+        }
+        
         //writes content from the buffer to the file
-        else if (*args[0] == 'w')
+        if (*args[0] == 'w')
         {
             int write = put_bytes(file, buffer, atoi(args[1]), atoi(args[2]));
         }
@@ -142,10 +247,7 @@ int main(int argc, char **argv)
         //input hex value
         else if (*args[0] == 'h')
         {
-            int hex = (int)strtol(args[2], NULL, 16);
-            int location = atoi(args[1]);
-            byte * ptr_location = (byte*)(&buffer[location]);
-            *ptr_location = hex;
+            input_hex(args, buffer);
         }
         //prints hex value
         else if (*args[0] == 'H')
@@ -156,10 +258,7 @@ int main(int argc, char **argv)
         //input char value
         else if (*args[0] == 'c')
         {
-            char value = *args[2];
-            int location =  atoi(args[1]);
-            char * ptr_location = (char*)(&buffer[location]);
-            *ptr_location = value;
+            input_char(args, buffer);
         }
         //prints char value
         else if (*args[0] == 'C')
@@ -170,10 +269,7 @@ int main(int argc, char **argv)
         //input float value
         else if (*args[0] == 'f')
         {
-            float value = atof(args[2]);
-            int location = atoi(args[1]);
-            float * ptr_location = (float*)(&buffer[location]);
-            *ptr_location = value;
+            input_float(args, buffer);
         }
         //prints float value
         else if (*args[0] == 'F')
