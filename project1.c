@@ -303,7 +303,7 @@ int main(int argc, char **argv)
         else if (*args[0] == 'H')
         {
             byte * ptr_loc = (byte*)(&buffer[atoi(args[1])]); //pointer to location in buffer to read
-            printf("%02x\n", *ptr_loc); //print hex at given location
+            printf("%x\n", *ptr_loc); //print hex at given location
         }
         //input char value
         else if (*args[0] == 'c')
