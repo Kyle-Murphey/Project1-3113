@@ -126,9 +126,9 @@ void input_float(byte * args[], byte * buffer)
     //checks each digit for float value
     for (int i = 0; i < strlen(args[2]); ++i)
     {
-        if ((*checkArgs != '-' || *checkArgs != '.') && (*checkArgs < '0' || *checkArgs > '9'))
+        if ((*checkArgs != '-' && *checkArgs != '.') && (*checkArgs < '0' || *checkArgs > '9'))
         {
-            fprintf(stderr, "invalid integer\n");
+            fprintf(stderr, "invalid float\n");
             return;
         }
         ++checkArgs;
