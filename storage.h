@@ -5,6 +5,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+/*
+ *  Project 1
+ * Kyle Murphey
+ * 9/24/19
+ */
+
+/* all functions defined in storage.c */
+
 typedef struct 
 {
   int fd;

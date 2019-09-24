@@ -7,6 +7,12 @@
 #define MAX_ARGS 4
 #define STORAGE_NAME "storage.bin"
 
+/*
+ *  Project 1
+ * Kyle Murphey
+ * 9/24/19
+ */
+
 /* separators for tokens/inputs */
 const char SEPARATORS[] = " \t\n";
 
@@ -15,6 +21,8 @@ typedef unsigned char byte;
 
 /*
  * stores integer value into the buffer
+ * @param:args = array of arguments passed in by the cl
+ * @param:buffer = buffer in use created in main
  */
 void input_int(byte * args[], byte * buffer)
 {
@@ -38,13 +46,15 @@ void input_int(byte * args[], byte * buffer)
         ++checkArgs;
     }
     int value = atoi(args[2]); //value to store
-    int location = atoi(args[1]); //location in buffer to get stored
+    int location = atoi(args[1]); //location in buffer to store
     int * ptr_location = (int*)(&buffer[location]); //pointer to the location in the buffer to store value
     *ptr_location = value; //set val of location to inputted value
 }
 
 /*
  * stores byte value into the buffer
+ * @param:args = array of arguments passed in by the cl
+ * @param:buffer = buffer in use created in main
  */
 void input_byte(byte * args[], byte * buffer)
 {
@@ -55,14 +65,16 @@ void input_byte(byte * args[], byte * buffer)
         return;
     }
 
-    byte value = atoi(args[2]);
-    int location = atoi(args[1]);
-    byte * ptr_location = (byte*)(&buffer[location]);
-    *ptr_location = value;
+    byte value = atoi(args[2]); //value to store
+    int location = atoi(args[1]); //location in buffer to store
+    byte * ptr_location = (byte*)(&buffer[location]); //pointer to the location in the buffer to store the value
+    *ptr_location = value; //set val of location to inputted value
 }
 
 /*
  * stores hex value into the buffer
+ * @param:args = array of arguments passed in by the cl
+ * @param:buffer = buffer in use created in main
  */
 void input_hex(byte * args[], byte * buffer)
 {
@@ -78,6 +90,7 @@ void input_hex(byte * args[], byte * buffer)
     //checks each digit for hex values
     for (int i = 0; i < strlen(args[2]); ++i)
     {
+        //checks if each character is a number or letter
         if (!(*checkArgs >= '0' && *checkArgs <= '9') && !(*checkArgs >= 'a' && *checkArgs <= 'z') && !(*checkArgs >= 'A' && *checkArgs <= 'Z'))
         {
             fprintf(stderr, "invalid hex\n");
@@ -85,14 +98,16 @@ void input_hex(byte * args[], byte * buffer)
         }
         ++checkArgs;
     }
-    int hex = (int)strtol(args[2], NULL, 16);
-    int location = atoi(args[1]);
-    byte * ptr_location = (byte*)(&buffer[location]);
-    *ptr_location = hex;
+    int hex = (int)strtol(args[2], NULL, 16); //value to store; converts input to long and then int
+    int location = atoi(args[1]); //location in buffer to store
+    byte * ptr_location = (byte*)(&buffer[location]); //pointer to the location in the buffer to store the value
+    *ptr_location = hex; //set val of location to inputted value
 }
 
 /*
- * stores char value into the buffer
+ * stores character value into the buffer
+ * @param:args = array of arguments passed in by the cl
+ * @param:buffer = buffer in use created in main
  */
 void input_char(byte * args[], byte * buffer)
 {
@@ -103,14 +118,16 @@ void input_char(byte * args[], byte * buffer)
         return;
     }
 
-    char value = *args[2];
-    int location =  atoi(args[1]);
-    char * ptr_location = (char*)(&buffer[location]);
-    *ptr_location = value;
+    char value = *args[2]; //value to store
+    int location =  atoi(args[1]); //location in buffer to store
+    char * ptr_location = (char*)(&buffer[location]); //pointer to the location in the buffer to store the value
+    *ptr_location = value; //set val of location to inputted value
 }
 
 /*
  * stores float value into the buffer
+ * @param:args = array of arguments passed in by the cl
+ * @param:buffer = buffer in use created in main
  */
 void input_float(byte * args[], byte * buffer)
 {
@@ -126,6 +143,7 @@ void input_float(byte * args[], byte * buffer)
     //checks each digit for float value
     for (int i = 0; i < strlen(args[2]); ++i)
     {
+        //checks if each value is a number, -, or .
         if ((*checkArgs != '-' && *checkArgs != '.') && (*checkArgs < '0' || *checkArgs > '9'))
         {
             fprintf(stderr, "invalid float\n");
@@ -133,14 +151,16 @@ void input_float(byte * args[], byte * buffer)
         }
         ++checkArgs;
     }
-    float value = atof(args[2]);
-    int location = atoi(args[1]);
-    float * ptr_location = (float*)(&buffer[location]);
-    *ptr_location = value;
+    float value = atof(args[2]); //value to store
+    int location = atoi(args[1]); //location in buffer to store
+    float * ptr_location = (float*)(&buffer[location]); //pointer to the location in the buffer to store the value
+    *ptr_location = value; //set val of location to inputted value
 }
 
 /*
  * stores string value into the buffer
+ * @param:args = array of arguments passed in by the cl
+ * @param:buffer = buffer in use created in main
  */
 void input_string(byte * args[], byte * buffer)
 {
@@ -151,9 +171,9 @@ void input_string(byte * args[], byte * buffer)
         return;
     }
     
-    char * string = args[2];
-    int strLength = strlen(args[2]);
-    int location = atoi(args[1]);
+    char * string = args[2]; //string to store
+    int strLength = strlen(args[2]); //length of the string
+    int location = atoi(args[1]); //location in buffer to store
 
     //stores each char of string into buffer
     for (int i = 0; i < strLength; ++i)
@@ -163,7 +183,10 @@ void input_string(byte * args[], byte * buffer)
 }
 
 /*
- * main function
+ * creates a buffer, opens/creates a file "storage.bin", stores/reads values from the buffer,
+ * reads/writes values from the file to the buffer, checks for errors in commands and then closes file at the end
+ * @param:argc = number of arguments
+ * @param:argv = arguments inputted (none needed)
  */
 int main(int argc, char **argv)
 {
@@ -268,8 +291,8 @@ int main(int argc, char **argv)
         //prints byte value
         else if (*args[0] == 'B')
         {
-            byte * ptr_loc = (byte*)(&buffer[atoi(args[1])]);
-            printf("%d\n", *ptr_loc);
+            byte * ptr_loc = (byte*)(&buffer[atoi(args[1])]); //pointer to location in buffer to read
+            printf("%d\n", *ptr_loc); //print byte at given location
         }
         //input hex value
         else if (*args[0] == 'h')
@@ -279,8 +302,8 @@ int main(int argc, char **argv)
         //prints hex value
         else if (*args[0] == 'H')
         {
-            byte * ptr_loc = (byte*)(&buffer[atoi(args[1])]);
-            printf("%02x\n", *ptr_loc);
+            byte * ptr_loc = (byte*)(&buffer[atoi(args[1])]); //pointer to location in buffer to read
+            printf("%02x\n", *ptr_loc); //print hex at given location
         }
         //input char value
         else if (*args[0] == 'c')
@@ -290,8 +313,8 @@ int main(int argc, char **argv)
         //prints char value
         else if (*args[0] == 'C')
         {
-            char * ptr_loc = (char*)(&buffer[atoi(args[1])]);
-            printf("%c\n", *ptr_loc);
+            char * ptr_loc = (char*)(&buffer[atoi(args[1])]); //pointer to location in buffer to read
+            printf("%c\n", *ptr_loc); //print character at given location
         }
         //input float value
         else if (*args[0] == 'f')
@@ -301,8 +324,8 @@ int main(int argc, char **argv)
         //prints float value
         else if (*args[0] == 'F')
         {
-            float * ptr_loc = (float*)(&buffer[atoi(args[1])]);
-            printf("%f\n", *ptr_loc);
+            float * ptr_loc = (float*)(&buffer[atoi(args[1])]); //pointer to location in buffer to read
+            printf("%f\n", *ptr_loc); //print float at given location
         }
         //input string value
         else if (*args[0] == 's')
@@ -312,8 +335,8 @@ int main(int argc, char **argv)
         //prints string value
         else if (*args[0] == 'S')
         {
-            char * ptr_loc = (char*)(&buffer[atoi(args[1])]);
-            printf("%s\n", ptr_loc);
+            char * ptr_loc = (char*)(&buffer[atoi(args[1])]); //pointer to location in buffer to read
+            printf("%s\n", ptr_loc); //print string at given location
         }
         //bad command
         else
