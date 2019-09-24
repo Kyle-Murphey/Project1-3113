@@ -347,4 +347,5 @@ int main(int argc, char **argv)
 
     //closing file
     int close = close_storage(file);
+    free(file);
 }
